@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>إلى ياسمين ❄️💗</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Google Fonts (Cairo & Tajawal & Aref Ruqaa for romantic headings) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@400;700&family=Cairo:wght@400;600;700;800&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+  
+  <!-- Canvas Confetti for Celebration Burst -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <style>
+    :root {
+      --pink-lightest: #fff0f5;
+      --pink-soft: #fce4ec;
+      --pink-medium: #f8bbd0;
+      --pink-accent: #ec407a;
+      --pink-deep: #d81b60;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: 'Cairo', 'Tajawal', sans-serif;
+      background: linear-gradient(135deg, #fff0f5 0%, #fce4ec 45%, #f8bbd0 100%);
+      min-height: 100vh;
+      min-height: 100dvh;
+      margin: 0;
+      overflow-x: hidden;
+      color: #5c1c35;
+      position: relative;
+    }
+
+    .romantic-title {
+      font-family: 'Aref Ruqaa', 'Cairo', serif;
+    }
+
+    /* Glassmorphism Card */
+    .glass-card {
+      background: rgba(255, 255, 255, 0.78);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1.5px solid rgba(255, 255, 255, 0.9);
+      box-shadow: 0 20px 50px rgba(216, 27, 96, 0.14), 0 4px 15px rgba(248, 187, 208, 0.3);
+    }
+
+    /* Snow Canvas */
+    #snow-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 5;
+    }
+
+    /* Smooth Shake Animation for Wrong Password */
+    @keyframes gentleShake {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-8px); }
+      40% { transform: translateX(8px); }
+      60% { transform: translateX(-6px); }
+      80% { transform: translateX(6px); }
+    }
+    .shake {
+      animation: gentleShake 0.45s ease-in-out;
+    }
+
+    /* Floating Heart / Glow Pulse */
+    @keyframes softPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.06); }
+    }
+    .pulse-heart {
+      animation: softPulse 2.2s infinite ease-in-out;
+    }
+
+    /* Fade & Scale Entrance */
+    @keyframes fadeInScale {
+      from {
+        opacity: 0;
+        transform: translateY(16px) scale(0.96);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+    .animate-enter {
+      animation: fadeInScale 0.65s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    /* Runaway button transition */
+    #no-btn {
+      transition: left 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), 
+                  top 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), 
+                  transform 0.2s ease;
+      user-select: none;
+      touch-action: none;
+    }
+
+    #yes-btn {
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), 
+                  box-shadow 0.3s ease, 
+                  background-color 0.3s ease;
+    }
+
+    /* Soundwave bars animation */
+    @keyframes soundWave {
+      0%, 100% { height: 5px; }
+      50% { height: 16px; }
+    }
+    .wave-bar {
+      width: 3px;
+      background-color: #d81b60;
+      border-radius: 9999px;
+      animation: soundWave 0.9s infinite ease-in-out;
+    }
+    .wave-bar:nth-child(2) { animation-delay: 0.2s; }
+    .wave-bar:nth-child(3) { animation-delay: 0.4s; }
+    .wave-paused .wave-bar {
+      animation-play-state: paused;
+      height: 5px;
+    }
+  </style>
+</head>
+<body class="flex items-center justify-center p-4 sm:p-6">
+
+  <!-- Background Falling Snow Canvas -->
+  <canvas id="snow-canvas"></canvas>
+
+  <!-- Decorative Soft Background Blobs -->
+  <div class="fixed top-[-10%] right-[-10%] w-72 h-72 rounded-full bg-pink-200/50 blur-3xl pointer-events-none"></div>
+  <div class="fixed bottom-[-10%] left-[-10%] w-80 h-80 rounded-full bg-rose-200/50 blur-3xl pointer-events-none"></div>
+
+  <!-- Hidden YouTube Player Container for "فرصة تانية" -->
+  <div id="yt-player-wrapper" class="fixed opacity-0 pointer-events-none w-1 h-1 overflow-hidden" aria-hidden="true">
+    <div id="yt-player"></div>
+  </div>
+
+  <!-- Floating Music Pill (Visible after unlock) -->
+  <div id="music-widget" class="hidden fixed top-4 left-4 z-40 glass-card rounded-full px-3.5 py-2 flex items-center gap-2.5 shadow-md transition-all hover:scale-105">
+    <button id="music-toggle-btn" type="button" aria-label="تشغيل أو إيقاف الأغنية" class="w-8 h-8 rounded-full bg-gradient-to-tr from-[#d81b60] to-[#f06292] text-white flex items-center justify-center shadow-sm active:scale-95 transition">
+      <!-- Play/Pause SVG injected dynamically -->
+      <svg id="icon-pause" class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+        <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
+      </svg>
+      <svg id="icon-play" class="w-4 h-4 hidden" fill="currentColor" viewBox="0 0 24 24">
+        <path d="M8 5v14l11-7z"/>
+      </svg>
+    </button>
+    <div class="flex flex-col text-right pr-0.5">
+      <span class="text-xs font-bold text-[#880e4f] leading-tight">فرصة تانية 🎶</span>
+      <span id="music-status-text" class="text-[10px] text-[#ad1457]/80 leading-tight">شغالة في الخلفية...</span>
+    </div>
+    <div id="sound-waves" class="flex items-end gap-0.5 h-4 mr-1">
+      <span class="wave-bar"></span>
+      <span class="wave-bar"></span>
+      <span class="wave-bar"></span>
+    </div>
+  </div>
+
+  <!-- ========================================================= -->
+  <!-- 1. PASSWORD GATE SCREEN                                   -->
+  <!-- ========================================================= -->
+  <main id="lock-screen" class="relative z-20 w-full max-w-md animate-enter">
+    <div class="glass-card rounded-3xl p-7 sm:p-9 text-center relative overflow-hidden">
+      <!-- Top Winter Ornament -->
+      <div class="mx-auto mb-4 w-16 h-16 rounded-2xl bg-gradient-to-br from-[#fce4ec] to-[#f8bbd0] border border-white flex items-center justify-center shadow-inner pulse-heart">
+        <span class="text-3xl" role="img" aria-label="قفل وقلب">🔐💗</span>
+      </div>
+
+      <h1 class="romantic-title text-2xl sm:text-3xl font-bold text-[#ad1457] mb-2">
+        رسالة خاصة لـ ياسمين ❄️
+      </h1>
+      <p class="text-xs sm:text-sm text-[#880e4f]/75 mb-6">
+        عشان تفتحي الرسالة وتسمعي اللي جواها، اكتبي الباسورد السري بتاعنا
+      </p>
+
+      <!-- Password Form -->
+      <form id="password-form" class="space-y-4" novalidate>
+        <div class="space-y-2">
+          <label for="password-input" class="block text-sm sm:text-base font-bold text-[#880e4f]">
+            تاريخ يوم اول مره قولتلك اني بحبك
+          </label>
+          <div class="relative">
+            <input
+              id="password-input"
+              type="text"
+              inputmode="numeric"
+              autocomplete="off"
+              placeholder="اكتبي الرقم هنا..."
+              class="w-full text-center text-lg sm:text-xl font-bold tracking-widest py-3.5 px-4 rounded-2xl bg-white/90 border-2 border-[#f8bbd0] text-[#880e4f] placeholder-[#d81b60]/35 focus:outline-none focus:border-[#d81b60] focus:ring-4 focus:ring-[#f8bbd0]/40 transition"
+            />
+          </div>
+        </div>
+
+        <!-- Cute Error Hint Box -->
+        <div id="error-box" class="hidden rounded-2xl bg-rose-100/90 border border-rose-300 px-4 py-2.5 text-xs sm:text-sm font-semibold text-[#b71c1c] transition-all">
+          جربي تاني يا ياسمين، افتكري اليوم كويس 🤍
+        </div>
+
+        <button
+          type="submit"
+          class="w-full py-3.5 px-6 rounded-2xl bg-gradient-to-r from-[#ec407a] to-[#d81b60] hover:from-[#d81b60] hover:to-[#ad1457] text-white font-bold text-base sm:text-lg shadow-lg shadow-pink-500/25 active:scale-[0.98] transition-all flex items-center justify-center gap-2 cursor-pointer"
+        >
+          <span>افتحي الرسالة</span>
+          <span class="text-xl">💌</span>
+        </button>
+      </form>
+
+      <div class="mt-6 flex items-center justify-center gap-2 text-xs text-[#ad1457]/60">
+        <span>❄️</span>
+        <span>معمولة مخصوص عشانك في الجو الشتوي ده</span>
+        <span>❄️</span>
+      </div>
+    </div>
+  </main>
+
+  <!-- ========================================================= -->
+  <!-- 2. MAIN ROMANTIC RECONCILIATION CARD                      -->
+  <!-- ========================================================= -->
+  <section id="main-screen" class="hidden relative z-20 w-full max-w-lg animate-enter">
+    <div class="glass-card rounded-3xl p-7 sm:p-10 text-center relative">
+      
+      <!-- Winter Pink Header Badge -->
+      <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/80 border border-[#f8bbd0] text-xs sm:text-sm font-bold text-[#d81b60] shadow-sm mb-4">
+        <span>❄️</span>
+        <span>شتاء دافي بوجودك</span>
+        <span>💗</span>
+      </div>
+
+      <!-- Greeting -->
+      <h2 class="romantic-title text-3xl sm:text-4xl font-bold text-[#ad1457] mb-5">
+        إلى ياسمين ❄️💗
+      </h2>
+
+      <!-- Heartfelt Apology Message Box -->
+      <div id="message-container" class="bg-white/75 border border-[#f8bbd0]/80 rounded-2xl p-5 sm:p-6 mb-7 shadow-inner relative">
+        <span class="absolute -top-3 right-5 text-xl">✨</span>
+        <p class="text-lg sm:text-xl font-bold leading-relaxed text-[#6a1b3a]">
+          "أنا معرفش إيه سبب الخناق، بس اللي متأكد منه إني مش حابب نبعد.."
+        </p>
+        <span class="absolute -bottom-3 left-5 text-xl">🤍</span>
+      </div>
+
+      <!-- Interactive Choice Section -->
+      <div id="choice-section" class="space-y-5">
+        <p class="text-base sm:text-lg font-extrabold text-[#880e4f]">
+          ها.. هتختاري إيه؟
+        </p>
+
+        <!-- Teasing subtext that updates when she tries to tap "نبعد" -->
+        <p id="tease-hint" class="text-xs sm:text-sm font-semibold text-[#d81b60] min-h-[20px] transition-opacity">
+          اختاري بقلبك يا ياسمين 🌷
+        </p>
+
+        <!-- Buttons Wrapper -->
+        <div class="flex items-center justify-center gap-4 sm:gap-6 pt-1 pb-2 min-h-[76px]">
+          <!-- "نرجع" Primary Button -->
+          <button
+            id="yes-btn"
+            type="button"
+            class="px-8 py-3.5 rounded-2xl bg-gradient-to-r from-[#ec407a] to-[#d81b60] text-white font-extrabold text-lg sm:text-xl shadow-lg shadow-pink-500/30 hover:shadow-pink-500/50 active:scale-95 cursor-pointer z-20"
+          >
+            نرجع ❤️
+          </button>
+
+          <!-- "نبعد" Placeholder to keep initial layout balanced before it teleports -->
+          <div id="no-btn-placeholder" class="inline-block">
+            <button
+              id="no-btn"
+              type="button"
+              class="px-6 py-3 rounded-2xl bg-white/90 border-2 border-[#f8bbd0] text-[#880e4f]/80 font-bold text-base sm:text-lg shadow-sm cursor-pointer z-30"
+            >
+              نبعد 💔
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ========================================================= -->
+      <!-- 3. CELEBRATION STATE (Shown when clicking "نرجع ❤️")       -->
+      <!-- ========================================================= -->
+      <div id="celebration-section" class="hidden space-y-5 pt-2 animate-enter">
+        <div class="w-20 h-20 mx-auto rounded-full bg-gradient-to-tr from-[#fce4ec] to-[#f8bbd0] border-2 border-white flex items-center justify-center shadow-md pulse-heart">
+          <span class="text-4xl">🥰💗</span>
+        </div>
+
+        <div class="bg-gradient-to-br from-white/90 to-[#fff0f5]/90 border-2 border-[#f8bbd0] rounded-2xl p-6 shadow-md">
+          <p class="text-lg sm:text-xl font-extrabold leading-relaxed text-[#ad1457]">
+            كنت متأكد إن قلبك أبيض ومش هيهون عليكي نبعد.. بحبك يا ياسمين 💗❄️
+          </p>
+        </div>
+
+        <p class="text-xs sm:text-sm font-semibold text-[#880e4f]/80">
+          يلا ننسى أي زعل ونبدأ صفحة جديدة أحلى مع بعض 🎶🤍
+        </p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- YouTube IFrame API Script -->
+  <script src="https://www.youtube.com/iframe_api"></script>
+
+  <script>
+    // =========================================================================
+    // 1. FALLING SNOWFLAKES ANIMATION (Soft Pink & White Winter Magic)
+    // =========================================================================
+    const canvas = document.getElementById('snow-canvas');
+    const ctx = canvas.getContext('2d');
+    let snowflakes = [];
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+
+    function createSnowflakes() {
+      const count = Math.min(75, Math.floor((window.innerWidth * window.innerHeight) / 12000));
+      snowflakes = [];
+      const colors = ['rgba(255, 255, 255, 0.9)', 'rgba(255, 240, 245, 0.85)', 'rgba(248, 187, 208, 0.55)'];
+
+      for (let i = 0; i < count; i++) {
+        snowflakes.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          radius: Math.random() * 3.5 + 1.5,
+          speedY: Math.random() * 1.1 + 0.45,
+          speedX: (Math.random() - 0.5) * 0.6,
+          drift: Math.random() * Math.PI * 2,
+          color: colors[Math.floor(Math.random() * colors.length)]
+        });
+      }
+    }
+
+    function animateSnow() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      for (let flake of snowflakes) {
+        flake.drift += 0.015;
+        flake.y += flake.speedY;
+        flake.x += flake.speedX + Math.sin(flake.drift) * 0.35;
+
+        if (flake.y > canvas.height + 10) {
+          flake.y = -10;
+          flake.x = Math.random() * canvas.width;
+        }
+        if (flake.x > canvas.width + 10) flake.x = -10;
+        if (flake.x < -10) flake.x = canvas.width + 10;
+
+        ctx.beginPath();
+        ctx.arc(flake.x, flake.y, flake.radius, 0, Math.PI * 2);
+        ctx.fillStyle = flake.color;
+        ctx.fill();
+      }
+
+      requestAnimationFrame(animateSnow);
+    }
+
+    window.addEventListener('resize', () => {
+      resizeCanvas();
+      createSnowflakes();
+      keepNoButtonInBounds();
+    });
+
+    resizeCanvas();
+    createSnowflakes();
+    animateSnow();
+
+    // =========================================================================
+    // 2. BACKGROUND AUDIO / YOUTUBE PLAYER ("فرصة تانية")
+    // =========================================================================
+    let ytPlayer = null;
+    let isPlaying = false;
+    let playerReady = false;
+    let audioContextFallback = null;
+
+    // YouTube Video ID for Rami Gamal - Forsa Tanya (فرصة تانية - رامي جمال)
+    // Using official/popular embeddable ID with fallback audio synthesis if offline/blocked
+    const SONG_VIDEO_ID = 'tP1g4_V0n0Y';
+
+    function onYouTubeIframeAPIReady() {
+      try {
+        ytPlayer = new YT.Player('yt-player', {
+          height: '1',
+          width: '1',
+          videoId: SONG_VIDEO_ID,
+          playerVars: {
+            autoplay: 0,
+            controls: 0,
+            loop: 1,
+            playlist: SONG_VIDEO_ID,
+            playsinline: 1,
+            rel: 0
+          },
+          events: {
+            onReady: () => {
+              playerReady = true;
+            },
+            onStateChange: (event) => {
+              if (event.data === YT.PlayerState.PLAYING) {
+                setMusicUIState(true);
+              } else if (event.data === YT.PlayerState.PAUSED) {
+                setMusicUIState(false);
+              }
+            },
+            onError: () => {
+              // Fallback if embed is restricted in specific region
+              playerReady = false;
+            }
+          }
+        });
+      } catch (e) {
+        console.warn('YouTube API init fallback:', e);
+      }
+    }
+
+    function setMusicUIState(playing) {
+      isPlaying = playing;
+      const iconPause = document.getElementById('icon-pause');
+      const iconPlay = document.getElementById('icon-play');
+      const statusText = document.getElementById('music-status-text');
+      const waves = document.getElementById('sound-waves');
+
+      if (playing) {
+        iconPause.classList.remove('hidden');
+        iconPlay.classList.add('hidden');
+        statusText.textContent = 'شغالة في الخلفية...';
+        waves.classList.remove('wave-paused');
+      } else {
+        iconPause.classList.add('hidden');
+        iconPlay.classList.remove('hidden');
+        statusText.textContent = 'اضغطي لتشغيل الأغنية';
+        waves.classList.add('wave-paused');
+      }
+    }
+
+    function startRomanticMusic() {
+      const widget = document.getElementById('music-widget');
+      widget.classList.remove('hidden');
+
+      if (ytPlayer && playerReady && typeof ytPlayer.playVideo === 'function') {
+        ytPlayer.setVolume(85);
+        ytPlayer.playVideo();
+        setMusicUIState(true);
+      } else {
+        // Attempt play shortly after if API is still warming up
+        setMusicUIState(false);
+        setTimeout(() => {
+          if (ytPlayer && playerReady && typeof ytPlayer.playVideo === 'function') {
+            ytPlayer.setVolume(85);
+            ytPlayer.playVideo();
+            setMusicUIState(true);
+          }
+        }, 1200);
+      }
+    }
+
+    document.getElementById('music-toggle-btn').addEventListener('click', () => {
+      if (!ytPlayer || !playerReady) return;
+      if (isPlaying) {
+        ytPlayer.pauseVideo();
+        setMusicUIState(false);
+      } else {
+        ytPlayer.playVideo();
+        setMusicUIState(true);
+      }
+    });
+
+    // =========================================================================
+    // 3. PASSWORD GATE LOGIC (Password: "22")
+    // =========================================================================
+    const passwordForm = document.getElementById('password-form');
+    const passwordInput = document.getElementById('password-input');
+    const errorBox = document.getElementById('error-box');
+    const lockScreen = document.getElementById('lock-screen');
+    const mainScreen = document.getElementById('main-screen');
+
+    // Convert Arabic numerals (٢٢) to English (22) automatically just in case her keyboard is Arabic
+    function normalizeDigits(str) {
+      return str
+        .replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d))
+        .replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d))
+        .trim();
+    }
+
+    passwordForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const entered = normalizeDigits(passwordInput.value);
+
+      if (entered === '22') {
+        errorBox.classList.add('hidden');
+        
+        // Start music immediately on user click gesture
+        startRomanticMusic();
+
+        // Transition screens smoothly
+        lockScreen.style.opacity = '0';
+        lockScreen.style.transform = 'scale(0.95)';
+        lockScreen.style.transition = 'all 0.4s ease';
+
+        setTimeout(() => {
+          lockScreen.classList.add('hidden');
+          mainScreen.classList.remove('hidden');
+          
+          // Gentle welcome confetti
+          if (typeof confetti === 'function') {
+            confetti({
+              particleCount: 40,
+              spread: 60,
+              origin: { y: 0.65 },
+              colors: ['#f8bbd0', '#ec407a', '#ffffff']
+            });
+          }
+        }, 380);
+      } else {
+        // Show cute hint & shake input
+        errorBox.classList.remove('hidden');
+        passwordInput.classList.remove('shake');
+        void passwordInput.offsetWidth; // trigger reflow
+        passwordInput.classList.add('shake');
+        passwordInput.focus();
+      }
+    });
+
+    // =========================================================================
+    // 4. IMPOSSIBLE RUNAWAY "نبعد 💔" BUTTON & GROWING "نرجع ❤️" BUTTON
+    // =========================================================================
+    const noBtn = document.getElementById('no-btn');
+    const noBtnPlaceholder = document.getElementById('no-btn-placeholder');
+    const yesBtn = document.getElementById('yes-btn');
+    const teaseHint = document.getElementById('tease-hint');
+    
+    let dodgeCount = 0;
+    let isDetached = false;
+
+    const teasingMessages = [
+      "إيه ده؟ الزرار بيهرب منك 😂💗",
+      "مفيش حاجة اسمها نبعد أصلاً! 🙈❄️",
+      "حاولي تاني كده؟ مش هتلحقيه 😜",
+      "شايفة زرار (نرجع) بيكبر إزاي عشانك؟ ❤️",
+      "خلاص بقى دوسي نرجع ومتتعبينيش 🥹🌷",
+      "الزرار ده معمول للزينة بس، ملوش لازمة 😉💗"
+    ];
+
+    function dodgeButton(e) {
+      if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+
+      dodgeCount++;
+
+      // Update teasing message
+      const msgIndex = Math.min(dodgeCount - 1, teasingMessages.length - 1);
+      teaseHint.textContent = teasingMessages[msgIndex];
+
+      // Grow the "نرجع ❤️" button playfully (capped so it stays tidy on mobile)
+      const scaleFactor = Math.min(1 + dodgeCount * 0.06, 1.38);
+      yesBtn.style.transform = `scale(${scaleFactor})`;
+
+      // Detach "نبعد" into fixed viewport positioning on first dodge
+      if (!isDetached) {
+        const rect = noBtn.getBoundingClientRect();
+        noBtnPlaceholder.style.width = `${rect.width}px`;
+        noBtnPlaceholder.style.height = `${rect.height}px`;
+        
+        document.body.appendChild(noBtn);
+        noBtn.style.position = 'fixed';
+        noBtn.style.left = `${rect.left}px`;
+        noBtn.style.top = `${rect.top}px`;
+        noBtn.style.zIndex = '50';
+        isDetached = true;
+      }
+
+      // Calculate safe random coordinates strictly within the visible viewport
+      const btnRect = noBtn.getBoundingClientRect();
+      const padding = 20;
+      const topSafeMargin = 75; // avoid overlapping floating music widget
+
+      const maxX = Math.max(padding, window.innerWidth - btnRect.width - padding);
+      const maxY = Math.max(topSafeMargin, window.innerHeight - btnRect.height - padding);
+
+      let newX, newY;
+      let attempts = 0;
+
+      // Ensure it jumps a noticeable distance away from its current spot & away from "نرجع"
+      const yesRect = yesBtn.getBoundingClientRect();
+
+      do {
+        newX = Math.floor(Math.random() * (maxX - padding + 1)) + padding;
+        newY = Math.floor(Math.random() * (maxY - topSafeMargin + 1)) + topSafeMargin;
+        attempts++;
+
+        const distFromCurrent = Math.hypot(newX - btnRect.left, newY - btnRect.top);
+        const overlapsYes = !(
+          newX + btnRect.width < yesRect.left - 15 ||
+          newX > yesRect.right + 15 ||
+          newY + btnRect.height < yesRect.top - 15 ||
+          newY > yesRect.bottom + 15
+        );
+
+        if (distFromCurrent > 90 && !overlapsYes) break;
+      } while (attempts < 25);
+
+      noBtn.style.left = `${newX}px`;
+      noBtn.style.top = `${newY}px`;
+      noBtn.style.transform = `rotate(${(Math.random() - 0.5) * 16}deg)`;
+    }
+
+    function keepNoButtonInBounds() {
+      if (!isDetached) return;
+      const rect = noBtn.getBoundingClientRect();
+      const padding = 16;
+      const clampedX = Math.min(Math.max(padding, rect.left), window.innerWidth - rect.width - padding);
+      const clampedY = Math.min(Math.max(padding, rect.top), window.innerHeight - rect.height - padding);
+      noBtn.style.left = `${clampedX}px`;
+      noBtn.style.top = `${clampedY}px`;
+    }
+
+    // Trigger dodge on every possible desktop & mobile interaction
+    noBtn.addEventListener('mouseenter', dodgeButton);
+    noBtn.addEventListener('mouseover', dodgeButton);
+    noBtn.addEventListener('touchstart', dodgeButton, { passive: false });
+    noBtn.addEventListener('pointerdown', dodgeButton);
+    noBtn.addEventListener('click', dodgeButton);
+
+    // =========================================================================
+    // 5. CELEBRATION STATE WHEN CLICKING "نرجع ❤️"
+    // =========================================================================
+    const choiceSection = document.getElementById('choice-section');
+    const celebrationSection = document.getElementById('celebration-section');
+
+    yesBtn.addEventListener('click', () => {
+      // Remove the runaway button completely
+      if (noBtn && noBtn.parentNode) {
+        noBtn.parentNode.removeChild(noBtn);
+      }
+
+      // Hide choice section & show celebration message
+      choiceSection.classList.add('hidden');
+      celebrationSection.classList.remove('hidden');
+
+      // Ensure music is playing
+      if (ytPlayer && playerReady && !isPlaying) {
+        ytPlayer.playVideo();
+        setMusicUIState(true);
+      }
+
+      // Trigger multi-burst pink & white celebration confetti
+      if (typeof confetti === 'function') {
+        const pinkPalette = ['#d81b60', '#ec407a', '#f48fb1', '#fce4ec', '#ffffff'];
+
+        confetti({
+          particleCount: 90,
+          spread: 80,
+          origin: { y: 0.6 },
+          colors: pinkPalette
+        });
+
+        setTimeout(() => {
+          confetti({
+            particleCount: 60,
+            angle: 60,
+            spread: 65,
+            origin: { x: 0, y: 0.65 },
+            colors: pinkPalette
+          });
+          confetti({
+            particleCount: 60,
+            angle: 120,
+            spread: 65,
+            origin: { x: 1, y: 0.65 },
+            colors: pinkPalette
+          });
+        }, 350);
+      }
+    });
+  </script>
+</body>
+</html>
